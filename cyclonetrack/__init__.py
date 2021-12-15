@@ -66,6 +66,11 @@ def mk_prmsl_file_list(data_root_dir: str) -> dict:
 
 
 def cal_deeping_rate(prmsl_tracks):
+    """cal_deeping_rate.
+
+    Args:
+        prmsl_tracks:
+    """
     for i, center_info in enumerate(prmsl_tracks):
         if i == 0 or i == len(prmsl_tracks) - 1:
             continue
@@ -80,6 +85,12 @@ def cal_deeping_rate(prmsl_tracks):
 
 
 def to_csv(prmsl_tracks: list, outname: str):
+    """to_csv.
+
+    Args:
+        prmsl_tracks (list): prmsl_tracks
+        outname (str): outname
+    """
     with open(outname, "w+", newline="") as csvfile:
         try:
             writer = csv.writer(csvfile)
@@ -93,6 +104,14 @@ def to_csv(prmsl_tracks: list, outname: str):
             print(f"save to --> {outname}")
 
 def main():
+    """main.
+    1. get stdin argument using parse_args().
+    2. make "prmsl_file_dict" using mk_prmsl_file_list().
+    3. find cyclone formed datetime and update "start_date".
+    4. cyclone track.
+    5. calcureta cyclone deeping_rate.
+    6. save to csv.
+    """
     args = parse_args()
     start_date = to_datetime(args["time"])
     lat0, lon0 = args["lat"], args["lon"]
@@ -102,7 +121,7 @@ def main():
     calc_phys = readnc.CalcPhysics(prmsl_file_dict[args["time"]], "GPV")
     jp_lat, jp_lon = calc_phys.get_lat_lon()
 
-    # find cyclone formed day to decide real "start_date".
+    # find cyclone formed datetime to update "start_date".
     formed_date = args["time"]
     for i, date in enumerate(sorted(prmsl_file_dict.keys(), reverse=True)):
         if start_date < to_datetime(date):
