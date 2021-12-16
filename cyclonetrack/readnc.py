@@ -11,25 +11,22 @@ Authore: Ryosuke Tomita
 Date: 2021/12/06
 """
 from typing import Tuple
+import dataclasses
 import numpy as np
 from netCDF4 import Dataset
 
 
+@dataclasses.dataclass
 class CalcPhysics:
     """CalcPhysics.
     """
+    ncfile: str
+    file_type: str
 
-    def __init__(self, ncfile: str, file_type: str):
-        """__init__.
-
-        Args:
-            ncfile (str): ncfile
-        """
-        self.ncfile = ncfile
+    def __post_init__(self):
         self.dataset = Dataset(self.ncfile)
 
-        if file_type == "GPV":
-            self.file_type = file_type
+        if self.file_type == "GPV":
             self.variables_name_lat = "latitude"
             self.variables_name_lon = "longitude"
 
@@ -42,9 +39,9 @@ class CalcPhysics:
         except KeyError:
             self.data_type = "2D"
 
-        self.jp_mask = None
-        self.len_jp_lat = None
-        self.len_jp_lon = None
+        self.jp_mask: np.ma.core.MaskedArray
+        self.len_jp_lat: int
+        self.len_jp_lon: int
 
     def get_lat_lon(self) -> Tuple[np.ndarray, np.ndarray]:
         """get_lat_lon.
