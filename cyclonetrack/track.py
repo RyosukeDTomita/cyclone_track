@@ -1,7 +1,8 @@
 # coding: utf-8
 """track.py
 """
-from typing import Tuple, Union
+from typing import Optional, Tuple
+import dataclasses
 import numpy as np
 from scipy import ndimage
 from cyclonetrack import biquadratic
@@ -28,7 +29,8 @@ def _around_mean(prmsl, i: int, j: int) -> float:
     return sum_data / 8
 
 
-def find_closest_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray, lat0: float, lon0: float) -> Tuple[np.ndarray, np.ndarray]:
+def find_closest_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray,
+            lat0: float, lon0: float) -> Tuple[Optional[np.ndarray], Optional[np.ndarray]]:
     """find_closest_min.
     find pressure center candidate.
     If candidate is found, check center pressure is 0.5 hPa
@@ -65,7 +67,9 @@ def find_closest_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray, lat0: 
 
         # check filterd min is low pressure center.
         center_prmsl = prmsl[lat_cyclone_center_index][lon_cyclone_center_index]
-        around_center_prmsl_mean = _around_mean(prmsl, lat_cyclone_center_index, lon_cyclone_center_index)
+        around_center_prmsl_mean = _around_mean(
+                prmsl, lat_cyclone_center_index, lon_cyclone_center_index
+        )
 
         if around_center_prmsl_mean - center_prmsl >= 0.5:
             return float(lat[lat_cyclone_center_index]), float(lon[lon_cyclone_center_index])
@@ -116,30 +120,21 @@ def track_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray, lat0: float, 
     return center_info
 
 
+@dataclasses.dataclass
 class CenterInfo:
     """CenterInfo.
     save cyclone center data made by track_min()
     """
+    lat: float
+    lon: float
+    prmsl: float
+    lat_center_index: int
+    lon_center_lat: int
+    date: str
 
-
-    def __init__(self, center_lat: float, center_lon: float, center_prmsl: float,
-                 lat_center_index: int, lon_center_index: int, date: str):
-        """__init__.
-
-        Args:
-            center_lat (float): center_lat
-            center_lon (float): center_lon
-            center_prmsl (float): center_prmsl
-            lat_center_index (int): lat_center_index
-            lon_center_index (int): lon_center_index
-            date (str): date
+    def __post_init__(self):
+        """__post_init__.
         """
-        self.lat = center_lat
-        self.lon = center_lon
-        self.prmsl = center_prmsl
-        self.lat_center_index = lat_center_index
-        self.lon_center_lat = lon_center_index
-        self.date = date
         self.deeping_rate = None
 
     def __str__(self):

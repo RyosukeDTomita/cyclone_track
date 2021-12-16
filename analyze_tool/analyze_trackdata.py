@@ -36,9 +36,14 @@ def parse_args() -> dict:
 
 @dataclasses.dataclass
 class MeteoData:
+    """MeteoData.
+    """
+
     csvfile: str
 
     def __post_init__(self):
+        """__post_init__.
+        """
         self.df = pd.read_csv(self.csvfile, header=0)
         print(f"-----{self.csvfile}-----")
 
@@ -48,6 +53,8 @@ class MeteoData:
         self.rapid_deeping_rate_index: int
 
     def find_rapid_deepingrate(self):
+        """find_rapid_deepingrate.
+        """
         self.rapid_deeping_rate_index = self.df["deeping_rate"].idxmax()
 
         event_day = self.df["date"][self.rapid_deeping_rate_index]
@@ -58,6 +65,8 @@ class MeteoData:
         self.rapid_deeping_rate_time = EventDatetime(event_day, lat, lon, event_dict)
 
     def find_min_prmsl(self):
+        """find_min_prmsl.
+        """
         self.min_prmsl_index = self.df["prmsl"].idxmin()
 
         event_day = self.df["date"][self.min_prmsl_index]
@@ -68,6 +77,8 @@ class MeteoData:
         self.min_prmsl_time = EventDatetime(event_day, lat, lon, event_dict)
 
     def __str__(self):
+        """__str__.
+        """
         rapid_dr = f'rapid_deeping_rate'
         rapid_dr_value = f'{self.rapid_deeping_rate_time.event_dict["rapid_dr"]}'
         rapid_dr_time = f'{self.rapid_deeping_rate_time.event_day}'
@@ -85,6 +96,9 @@ min_prmls, {min_prmsl_value}hPa, {min_prmsl_time}, {min_prmsl_lat}, {min_prmsl_l
 
 @dataclasses.dataclass
 class EventDatetime:
+    """EventDatetime.
+    """
+
     event_day: str
     lat: float
     lon: float
@@ -92,6 +106,8 @@ class EventDatetime:
 
 
 def main():
+    """main.
+    """
     args = parse_args()
     if args["dir"] is not None:
         #csvfile_list = g
