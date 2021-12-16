@@ -13,7 +13,6 @@ from os.path import abspath, join
 import re
 from datetime import datetime
 import csv
-import numpy as np
 from cyclonetrack import readnc
 from cyclonetrack import track
 from .options import parse_args

@@ -1,5 +1,0 @@
-Cartopy
-numpy
-scipy
-matplotlib
-netCDF4
