@@ -60,6 +60,8 @@ class JpMap:
             #self.ax.add_feature(cfea.OCEAN, color='#87cefa')
             self.ax.add_feature(cfea.LAND, color='#f5deb3')
             self.ax.add_feature(cfea.OCEAN, color='#afeeee')
+            #self.ax.coastlines(resolution="10m")
+            #self.ax.add_feature(cfea.NaturalEarthFeature("physical", 'land', '10m'))
 
         # grid setting
         grid = self.ax.gridlines(crs=ccrs.PlateCarree(),
@@ -83,7 +85,7 @@ class JpMap:
 
         self.plt_cnt = 0
 
-    def plot_data(self, x, y, label: str):
+    def plot_data(self, y, x, label: str):
         """plot_data.
         plot location data. plot type is dot.
 
@@ -94,7 +96,7 @@ class JpMap:
             cnst_marker
         """
         plt.rcParams['font.size'] = 36 # label font size
-        self.ax.plot(y, x, 'bo',
+        self.ax.plot(x, y, 'bo',
                      label=label,
                      markersize=15,
                      color=self.color_list[self.plt_cnt],
@@ -104,7 +106,7 @@ class JpMap:
                      linewidth=4,)
         self.plt_cnt += 1
 
-    def plot_value(self, x, y, z):
+    def plot_value(self, y, x, z):
         """plot_value.
         plot z value on japan map. x, y are location data.
 
@@ -115,9 +117,9 @@ class JpMap:
         """
 
         for i in range(len(x)):
-            self.ax.plot(y[i], x[i], marker=str(f'${z[i]:.2f}$'), markersize=90, color='k')
+            self.ax.plot(x[i], y[i]-1, marker=str(f'${z[i]:.2f}$'), markersize=90, color='k')
 
-    def plot_prmsl_circle(self, x, y, z):
+    def plot_prmsl_circle(self, y, x, z):
         """plot_value.
         plot z value on japan map. x, y are location data.
 
@@ -129,7 +131,7 @@ class JpMap:
 
         for i in range(len(x)):
             scale = (1030 - z[i]) // 3
-            self.ax.plot(y[i], x[i], 'bo',
+            self.ax.plot(x[i], y[i], 'bo',
                          markersize=15+scale,
                          color=self.color_list[self.plt_cnt-1],
                          markeredgewidth=1.6,
