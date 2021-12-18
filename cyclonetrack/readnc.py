@@ -29,9 +29,14 @@ class CalcPhysics:
         if self.file_type == "GPV":
             self.variables_name_lat = "latitude"
             self.variables_name_lon = "longitude"
+            self.variables_name_level = "level"
+        elif self.file_type == "jra55":
+            self.variables_name_lat = "lat"
+            self.variables_name_lon = "lon"
+            self.variables_name_level = "lev"
 
         try:
-            isobaric_surface = np.array(self.dataset.variables["level"])
+            isobaric_surface = np.array(self.dataset.variables[self.variables_name_level])
             isobaric_surface_key = [str(int(level)) for level in isobaric_surface]
             isobaric_value = list(range(len(isobaric_surface)))
             self.isobaric_surface_dict = dict(zip(isobaric_surface_key, isobaric_value))

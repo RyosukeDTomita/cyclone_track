@@ -10,9 +10,8 @@ Author: Ryosuke Tomita
 Date: 2021/12/17
 """
 import argparse
-import csv
 import os
-from os.path import abspath, dirname, join
+from os.path import abspath, join
 import re
 from typing import Tuple
 import pandas as pd
@@ -65,8 +64,6 @@ def read_csv(csvfile: str) -> Tuple[pd.Series, pd.Series, pd.Series]:
     return lat, lon, prmsl
 
 
-#def mk_title_outname(dir_name: str)
-
 def main():
     args = parse_args()
     if   args["dir"] is not None:
@@ -76,7 +73,7 @@ def main():
         lat, lon, prmsl = read_csv(initialdata)
 
         label = mk_label(initialdata)
-        jp_map = japanmap.JpMap()
+        jp_map = japanmap.JpMap(color=True)
         jp_map.color_list.insert(0, '#696969')
         jp_map.plot_data(lat, lon, str(label))
         jp_map.plot_prmsl_circle(lat, lon, prmsl)
