@@ -90,7 +90,7 @@ def main():
 
     prmsl_file_dict = mk_file_list.mk_file_list(args["dir"])
 
-    calc_phys = readnc.CalcPhysics(prmsl_file_dict[args["time"]], "GPV")
+    calc_phys = readnc.CalcPhysics(prmsl_file_dict[args["time"]], args["filetype"])
     jp_lat, jp_lon = calc_phys.get_lat_lon()
 
     # find cyclone formed datetime to update "start_date".
@@ -98,7 +98,12 @@ def main():
     for i, date in enumerate(sorted(prmsl_file_dict.keys(), reverse=True)):
         if start_date < to_datetime(date):
             continue
-        prmsl = calc_phys.get_parameter("prmsl", ncfile=prmsl_file_dict[date])
+
+        if   args["filetype"] == "GPV":
+            prmsl = calc_phys.get_parameter("prmsl", ncfile=prmsl_file_dict[date])
+        else:
+            prmsl = calc_phys.get_parameter("msl", ncfile=prmsl_file_dict[date])
+
         cyclone_center_lat, cyclone_center_lon = track.find_closest_min(prmsl, jp_lat, jp_lon, lat0, lon0)
         formed_date = date
         if cyclone_center_lat is None:
@@ -114,7 +119,12 @@ def main():
 
         if start_date > to_datetime(date):
             continue
-        prmsl = calc_phys.get_parameter("prmsl", prmsl_file_dict[date])
+
+        if   args["filetype"] == "GPV":
+            prmsl = calc_phys.get_parameter("prmsl", prmsl_file_dict[date])
+        else:
+            prmsl = calc_phys.get_parameter("msl", ncfile=prmsl_file_dict[date]) / 100
+
         center_info = track.track_min(prmsl, jp_lat, jp_lon, lat0, lon0, date)
         lat0 = center_info.lat
         lon0 = center_info.lon

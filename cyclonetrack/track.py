@@ -49,7 +49,7 @@ def find_closest_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray,
     # minimum value filter
     filterd_prmsl = np.where(
             ndimage.filters.minimum_filter(
-                prmsl, size=(12, 12), mode=('nearest', 'wrap')
+                prmsl, size=(9, 9), mode=('nearest', 'wrap')
             ) == prmsl
     )
 

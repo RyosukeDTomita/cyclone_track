@@ -20,7 +20,10 @@ def parse_args() -> dict:
     parser.add_argument(
         "-d", "--dir", help="set directory name. This is the initial time.", type=str)
     parser.add_argument(
-        "-t", "--time", help="set starttime. Format is yy-mm-dd_hh.", type=str)
+        "-t", "--time", help="set start time. Format is yy-mm-dd_hh.", type=str)
+    parser.add_argument(
+        "-f", "--filetype", help="set file type.", type=str)
     p = parser.parse_args()
-    args = {"lat": p.lat, "lon": p.lon, "dir": p.dir, "time": p.time}
+    args = {"lat": p.lat, "lon": p.lon, "dir": p.dir,
+            "time": p.time, "filetype": p.filetype}
     return args
