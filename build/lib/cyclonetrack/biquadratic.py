@@ -1,3 +1,7 @@
+# coding: utf-8
+"""
+Copied by https://github.com/tenomoto/pytrack/blob/master/biquadratic.py interpolate(), https://github.com/tenomoto/pytrack/blob/master/grid.py __set_stencil().
+"""
 import numpy as np
 
 

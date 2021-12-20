@@ -1,13 +1,25 @@
 # coding: utf-8
 """track.py
 """
-from typing import Tuple
+from typing import Optional, Tuple
+import dataclasses
 import numpy as np
 from scipy import ndimage
 from cyclonetrack import biquadratic
 
 
-def _around_mean(prmsl, i, j):
+def _around_mean(prmsl, i: int, j: int) -> float:
+    """_around_mean.
+    calcurate adjacent grid mean.
+
+    Args:
+        prmsl:
+        i (int): i
+        j (int): j
+
+    Returns:
+        float:
+    """
     sum_data = 0
     for i in range(-1, 2, 1):
         for j in range(-1, 2, 1):
@@ -17,11 +29,27 @@ def _around_mean(prmsl, i, j):
     return sum_data / 8
 
 
-def find_closest_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray, lat0: float, lon0: float) -> Tuple[np.ndarray, np.ndarray]:
+def find_closest_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray,
+            lat0: float, lon0: float) -> Tuple[Optional[np.ndarray], Optional[np.ndarray]]:
+    """find_closest_min.
+    find pressure center candidate.
+    If candidate is found, check center pressure is 0.5 hPa
+        less than adjacent grid mean(calcurated by _around_mean()).
+
+    Args:
+        prmsl (np.ndarray): prmsl
+        lat (np.ndarray): lat
+        lon (np.ndarray): lon
+        lat0 (float): lat0
+        lon0 (float): lon0
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]:
+    """
     # minimum value filter
     filterd_prmsl = np.where(
             ndimage.filters.minimum_filter(
-                prmsl, size=(12, 12), mode=('nearest', 'wrap')
+                prmsl, size=(9, 9), mode=('nearest', 'wrap')
             ) == prmsl
     )
 
@@ -39,7 +67,9 @@ def find_closest_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray, lat0: 
 
         # check filterd min is low pressure center.
         center_prmsl = prmsl[lat_cyclone_center_index][lon_cyclone_center_index]
-        around_center_prmsl_mean = _around_mean(prmsl, lat_cyclone_center_index, lon_cyclone_center_index)
+        around_center_prmsl_mean = _around_mean(
+                prmsl, lat_cyclone_center_index, lon_cyclone_center_index
+        )
 
         if around_center_prmsl_mean - center_prmsl >= 0.5:
             return float(lat[lat_cyclone_center_index]), float(lon[lon_cyclone_center_index])
@@ -48,6 +78,18 @@ def find_closest_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray, lat0: 
 
 
 def track_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray, lat0: float, lon0: float, datedata: str):
+    """track_min.
+    track cyclone center position and
+    save data to CenterInfo class.
+
+    Args:
+        prmsl (np.ndarray): prmsl
+        lat (np.ndarray): lat
+        lon (np.ndarray): lon
+        lat0 (float): lat0
+        lon0 (float): lon0
+        datedata (str): datedata
+    """
     # minimum value filter
     filterd_prmsl = np.where(
             ndimage.filters.minimum_filter(
@@ -78,16 +120,21 @@ def track_min(prmsl: np.ndarray, lat: np.ndarray, lon: np.ndarray, lat0: float, 
     return center_info
 
 
+@dataclasses.dataclass
 class CenterInfo:
+    """CenterInfo.
+    save cyclone center data made by track_min()
+    """
+    lat: float
+    lon: float
+    prmsl: float
+    lat_center_index: int
+    lon_center_lat: int
+    date: str
 
-    def __init__(self, center_lat: float, center_lon: float, center_prmsl: float,
-                 lat_center_index: int, lon_center_index: int, date: str):
-        self.lat = center_lat
-        self.lon = center_lon
-        self.prmsl = center_prmsl
-        self.lat_center_index = lat_center_index
-        self.lon_center_lat = lon_center_index
-        self.date = date
+    def __post_init__(self):
+        """__post_init__.
+        """
         self.deeping_rate = None
 
     def __str__(self):

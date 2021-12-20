@@ -13,6 +13,7 @@ from os.path import abspath, join
 import re
 from datetime import datetime
 import csv
+from cyclonetrack import mk_file_list
 from cyclonetrack import readnc
 from cyclonetrack import track
 from .options import parse_args
@@ -34,34 +35,6 @@ def to_datetime(datetime_str: str) -> datetime:
     except ValueError:
         print(f"{datetime_str} is not valid format %Y-%m-%d_%H")
         sys.exit()
-
-
-def mk_prmsl_file_list(data_root_dir: str) -> dict:
-    """mk_prmsl_file_list.
-    return "prmsl_file_dict".
-    This dictionary are consisted by {}
-
-    Args:
-        data_root_dir (str): data_root_dir
-        start_date (datetime): start_date
-
-    Returns:
-        list:
-    """
-    prmsl_file_list = []
-    date_list = []
-    for file_ in sorted(os.listdir(data_root_dir)):
-        if "prmsl" not in file_:
-            continue
-
-        ncfile_has_datetime = re.search(
-                '[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}', file_)
-        if not ncfile_has_datetime:
-            continue
-
-        prmsl_file_list.append(join(abspath(data_root_dir), file_))
-        date_list.append(ncfile_has_datetime.group())
-    return dict(zip(date_list, prmsl_file_list))
 
 
 def cal_deeping_rate(prmsl_tracks):
@@ -115,9 +88,9 @@ def main():
     start_date = to_datetime(args["time"])
     lat0, lon0 = args["lat"], args["lon"]
 
-    prmsl_file_dict = mk_prmsl_file_list(args["dir"])
+    prmsl_file_dict = mk_file_list.mk_file_list(args["dir"])
 
-    calc_phys = readnc.CalcPhysics(prmsl_file_dict[args["time"]], "GPV")
+    calc_phys = readnc.CalcPhysics(prmsl_file_dict[args["time"]], args["filetype"])
     jp_lat, jp_lon = calc_phys.get_lat_lon()
 
     # find cyclone formed datetime to update "start_date".
@@ -125,15 +98,21 @@ def main():
     for i, date in enumerate(sorted(prmsl_file_dict.keys(), reverse=True)):
         if start_date < to_datetime(date):
             continue
-        prmsl = calc_phys.get_parameter("prmsl", ncfile=prmsl_file_dict[date])
+
+        if   args["filetype"] == "GPV":
+            prmsl = calc_phys.get_parameter("prmsl", ncfile=prmsl_file_dict[date])
+        else:
+            prmsl = calc_phys.get_parameter("msl", ncfile=prmsl_file_dict[date])
+
         cyclone_center_lat, cyclone_center_lon = track.find_closest_min(prmsl, jp_lat, jp_lon, lat0, lon0)
-        formed_date = date
         if cyclone_center_lat is None:
             print(f"cyclone formed time = {formed_date}")
             start_date = to_datetime(formed_date)
             break
+        formed_date = date
         lat0 = cyclone_center_lat
         lon0 = cyclone_center_lon
+        print(lat0, lon0)
 
     # From "start_date", track cyclone.
     prmsl_tracks = []
@@ -141,7 +120,12 @@ def main():
 
         if start_date > to_datetime(date):
             continue
-        prmsl = calc_phys.get_parameter("prmsl", prmsl_file_dict[date])
+
+        if   args["filetype"] == "GPV":
+            prmsl = calc_phys.get_parameter("prmsl", prmsl_file_dict[date])
+        else:
+            prmsl = calc_phys.get_parameter("msl", ncfile=prmsl_file_dict[date]) / 100
+
         center_info = track.track_min(prmsl, jp_lat, jp_lon, lat0, lon0, date)
         lat0 = center_info.lat
         lon0 = center_info.lon
@@ -161,4 +145,4 @@ def main():
     to_csv(prmsl_tracks, outname)
 
 
-__all__ = ["main", "to_datetime", "mk_prmsl_file_list"]
+__all__ = ["main", "to_datetime", "to_csv", "cal_deeping_rate"]
