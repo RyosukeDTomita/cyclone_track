@@ -25,7 +25,6 @@ class CalcPhysics:
 
     def __post_init__(self):
         self.dataset = Dataset(self.ncfile)
-        print(self.file_type)
 
         if self.file_type == "GPV":
             self.variables_name_lat = "latitude"

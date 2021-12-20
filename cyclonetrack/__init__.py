@@ -8,8 +8,6 @@ Date: 2021/12/14
 """
 import sys
 import math
-import os
-from os.path import abspath, join
 import re
 from datetime import datetime
 import csv
@@ -97,6 +95,7 @@ def main():
 
     # find cyclone formed datetime to update "formed_datetime".
     formed_date = args["time"]
+    tracker = track.Tracker(args["filetype"])
     for i, date in enumerate(sorted(prmsl_file_dict.keys(), reverse=True)):
         if formed_datetime < to_datetime(date):
             continue
@@ -106,8 +105,9 @@ def main():
         else:
             prmsl = calc_phys.get_parameter("msl", ncfile=prmsl_file_dict[date])
 
-        cyclone_center_lat, cyclone_center_lon = track.find_closest_min(prmsl, jp_lat, jp_lon, lat0, lon0)
+        cyclone_center_lat, cyclone_center_lon = tracker.find_closest_min(prmsl, jp_lat, jp_lon, lat0, lon0)
         if cyclone_center_lat is None:
+            print(lat0, lon0)
             print(f"cyclone formed time = {formed_date}")
             formed_datetime = to_datetime(formed_date)
             break
@@ -127,7 +127,7 @@ def main():
         else:
             prmsl = calc_phys.get_parameter("msl", ncfile=prmsl_file_dict[date]) / 100
 
-        center_info = track.track_min(prmsl, jp_lat, jp_lon, lat0, lon0, date)
+        center_info = tracker.track_min(prmsl, jp_lat, jp_lon, lat0, lon0, date)
         lat0 = center_info.lat
         lon0 = center_info.lon
         print(center_info)

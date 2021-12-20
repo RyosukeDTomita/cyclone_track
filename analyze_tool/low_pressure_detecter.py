@@ -10,14 +10,15 @@ Author: Ryosuke Tomita
 Date: 2021/12/19
 """
 import argparse
-from os.path import dirname, join
+from os.path import abspath, dirname, join
 import sys
 import numpy as np
 from scipy import ndimage
 import netCDF4
 import japanmap
-sys.path.append(join(dirname(__file__) + "../cyclonetrack"))
+sys.path.append(join(abspath(dirname(__file__)), "../cyclonetrack"))
 import readnc
+import fetchtime
 
 
 def parse_args() -> dict:
@@ -134,9 +135,12 @@ def output_name(ncfile: str) -> str:
     Returns:
         str:
     """
-    data_set = netCDF4.Dataset(ncfile, 'r')
-    time = data_set.variables["time"]
-    date_time = str(netCDF4.num2date(time[0], time.units)).replace(" ", "_")[:13]
+    #data_set = netCDF4.Dataset(ncfile, 'r')
+    #time = data_set.variables["time"]
+    #date_time = str(netCDF4.num2date(time[0], time.units)).replace(" ", "_")[:13]
+    date_time = fetchtime.fetch_time(ncfile)
+    if "_06" in ncfile or "_18" in ncfile:
+        date_time = fetchtime.fix_datetime(date_time)
     outname = (date_time + "low_pressure")
     return outname
 
