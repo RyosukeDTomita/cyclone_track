@@ -105,13 +105,14 @@ def main():
             prmsl = calc_phys.get_parameter("msl", ncfile=prmsl_file_dict[date])
 
         cyclone_center_lat, cyclone_center_lon = track.find_closest_min(prmsl, jp_lat, jp_lon, lat0, lon0)
-        formed_date = date
         if cyclone_center_lat is None:
             print(f"cyclone formed time = {formed_date}")
             start_date = to_datetime(formed_date)
             break
+        formed_date = date
         lat0 = cyclone_center_lat
         lon0 = cyclone_center_lon
+        print(lat0, lon0)
 
     # From "start_date", track cyclone.
     prmsl_tracks = []

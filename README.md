@@ -81,6 +81,7 @@ pip install cyclone-track-0.0.1.tar.gz
 
 ```
 pip uninstall cycloen-track
+python setup.py develop -u
 ```
 ******
 

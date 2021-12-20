@@ -25,6 +25,7 @@ class CalcPhysics:
 
     def __post_init__(self):
         self.dataset = Dataset(self.ncfile)
+        print(self.file_type)
 
         if self.file_type == "GPV":
             self.variables_name_lat = "latitude"
@@ -66,7 +67,7 @@ class CalcPhysics:
         jp_lon = lon[lon_gt110_lt180]
         self.len_jp_lat = len(jp_lat)
         self.len_jp_lon = len(jp_lon)
-        return jp_lat, jp_lon
+        return np.array(jp_lat), np.array(jp_lon)
 
     def get_parameter(self, params:str, ncfile=None, isobaric_surface=None) -> np.ndarray:
         """get_parameter.
