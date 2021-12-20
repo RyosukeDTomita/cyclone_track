@@ -1,3 +1,5 @@
 *.csv
 analyze_tool/*.png
 *.sh
+*.png
+shells/*.png

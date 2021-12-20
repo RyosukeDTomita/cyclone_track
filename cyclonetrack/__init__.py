@@ -108,6 +108,7 @@ def main():
 
         cyclone_center_lat, cyclone_center_lon = track.find_closest_min(prmsl, jp_lat, jp_lon, lat0, lon0)
         if cyclone_center_lat is None:
+            print(lat0, lon0)
             print(f"cyclone formed time = {formed_date}")
             formed_datetime = to_datetime(formed_date)
             break
