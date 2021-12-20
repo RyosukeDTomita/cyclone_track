@@ -51,12 +51,14 @@ surface-2020-12-03_06-prmsl_hPa
 
 ```shell
 # just clone repository (RECOMMEND).
-python3 -m cyclonetrack -x 135 -y 37 --dir ~/data_ini/prmsl -t 2021-01-06_12
+python3 -m cyclonetrack -x 135 -y 37 --dir ~/data_ini/prmsl -t 2021-01-06_12 --filetype GPV
+python3 -m cyclonetrack -x 135 -y 37 --dir ~/jra55/anl_surf125/202101 -t 2021-01-06_12 --filetype jra55
 ```
 
 ```shell
 # need to install. (see INSTALATION.)
-cyclone-track -x 135 -y 37 --dir ~/data_ini/prmsl -t 2021-01-06_12
+cyclone-track -x 135 -y 37 --dir ~/data_ini/prmsl -t 2021-01-06_12 --filetype GPV
+cyclone-track -x 135 -y 37 --dir ~/jra55/anl_surf125/202101 -t 2021-01-06_12 --filetype jra55
 ```
 ******
 

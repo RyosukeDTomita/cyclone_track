@@ -1,2 +1,3 @@
 *.csv
 analyze_tool/*.png
+*.sh
