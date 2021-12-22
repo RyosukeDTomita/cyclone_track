@@ -33,7 +33,7 @@
 # HOWTOUSE
 ## data set construction.
 
-```
+```shell
 ls ~/data_ini/prmsl
 surface-2020-12-01_00-prmsl_hPa
 surface-2020-12-01_06-prmsl_hPa
@@ -48,15 +48,16 @@ surface-2020-12-03_06-prmsl_hPa
 ```
 
 ## run
+### just clone repository and run package (RECOMMEND).
 
 ```shell
-# just clone repository (RECOMMEND).
 python3 -m cyclonetrack -x 135 -y 37 --dir ~/data_ini/prmsl -t 2021-01-06_12 --filetype GPV
 python3 -m cyclonetrack -x 135 -y 37 --dir ~/jra55/anl_surf125/202101 -t 2021-01-06_12 --filetype jra55
 ```
 
+### need to install. (see INSTALATION.)
+
 ```shell
-# need to install. (see INSTALATION.)
 cyclone-track -x 135 -y 37 --dir ~/data_ini/prmsl -t 2021-01-06_12 --filetype GPV
 cyclone-track -x 135 -y 37 --dir ~/jra55/anl_surf125/202101 -t 2021-01-06_12 --filetype jra55
 ```
@@ -72,11 +73,22 @@ cd cyclone_track
 python3 setup.py install
 ```
 
-## build from tar.gz
+## Using pip
+
+### build from tar.gz(sometime flozen file is not up to date.)
 
 ```shell
 wget https://github.com/RyosukeDTomita/cyclone_track/blob/master/dist/cyclone-track-0.0.1.tar.gz
 pip install cyclone-track-0.0.1.tar.gz
+```
+
+### make tar.gz
+
+```shell
+git clone https://github.com/RyosukeDTomita/cyclone_track.git
+cd cyclone_track
+python3 setup.py sdist
+pip install ./dist/cyclone-track-0.0.1.tar.gz
 ```
 
 ## uninstall
