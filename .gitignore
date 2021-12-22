@@ -3,3 +3,4 @@ analyze_tool/*.png
 tesh.sh
 *.png
 shells/*.png
+build
