@@ -21,28 +21,34 @@ class CalcPhysics:
     """CalcPhysics.
     """
     ncfile: str
-    file_type: str
 
     def __post_init__(self):
         self.dataset = Dataset(self.ncfile)
 
-        if self.file_type == "GPV":
-            self.variables_name_lat = "latitude"
-            self.variables_name_lon = "longitude"
-            self.variables_name_level = "level"
-        elif self.file_type == "jra55":
-            self.variables_name_lat = "lat"
-            self.variables_name_lon = "lon"
-            self.variables_name_level = "lev"
+        # set variable name.
+        self.variables_name_level = None
+        for dim in self.dataset.dimensions:
+            if   self.dataset[dim].axis == "Y":
+                self.variables_name_lat = dim
+            elif self.dataset[dim].axis == "X":
+                self.variables_name_lon = dim
+            elif self.dataset[dim].axis == "Z":
+                self.variables_name_level = dim
+            else:
+                continue
 
+        # check data is 3D or 2D
         try:
             isobaric_surface = np.array(self.dataset.variables[self.variables_name_level])
             isobaric_surface_key = [str(int(level)) for level in isobaric_surface]
             isobaric_value = list(range(len(isobaric_surface)))
             self.isobaric_surface_dict = dict(zip(isobaric_surface_key, isobaric_value))
-            self.data_type = "3D"
+            if "lev" in self.variables_name_level:
+                self.data_dims = "3D"
+            else:
+                self.data_dims = "2D"
         except KeyError:
-            self.data_type = "2D"
+            self.data_dims = "2D"
 
         self.jp_mask: np.ma.core.MaskedArray
         self.len_jp_lat: int
@@ -71,6 +77,9 @@ class CalcPhysics:
     def get_parameter(self, params:str, ncfile=None, isobaric_surface=None) -> np.ndarray:
         """get_parameter.
         read netcdf file to get physical parameter.
+        Warning: ncfile can be updated but lat, lon data cannot updated. 
+        If you use netcdf file which is different lat lon data,
+        remake Class instance.
 
             ncfile:
             isobaric_surface:
@@ -88,17 +97,17 @@ class CalcPhysics:
         # select isobaric surface
         if isobaric_surface is not None:
             data_raw = self.dataset.variables[params][0][self.isobaric_surface_dict[str(isobaric_surface)]]
-            self.data_type = "2D"
+            self.data_dims = "2D"
         else:
             data_raw = self.dataset.variables[params][0]
 
         # erase not near japan area data.
-        if  self.data_type == "3D":
+        if  self.data_dims == "3D":
             data = []
             for data_2d in data_raw:
                 data.append(
                         data_2d[np.where(self.jp_mask)].reshape(self.len_jp_lat, self.len_jp_lon)
                 )
-        elif self.data_type == "2D":
+        elif self.data_dims == "2D":
             data = data_raw[np.where(self.jp_mask)].reshape(self.len_jp_lat, self.len_jp_lon)
         return np.array(data)
