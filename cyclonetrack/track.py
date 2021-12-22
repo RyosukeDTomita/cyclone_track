@@ -127,11 +127,24 @@ class Tracker:
         range_from_center = np.arccos(
                 np.sin(y0) * np.sin(y1) + np.cos(y0) * np.cos(y1) * np.cos(dx)
         )
-        closest_min_index = np.argmin(range_from_center)
-        lon_center_index = filterd_prmsl[1][closest_min_index]
-        lat_center_index = filterd_prmsl[0][closest_min_index]
-        f = biquadratic.set_stencil(prmsl, lon_center_index, lat_center_index)
+
+        # find most closest min and check low pressure.
+        while True:
+            closest_min_index = np.argmin(range_from_center)
+            lon_center_index = filterd_prmsl[1][closest_min_index]
+            lat_center_index = filterd_prmsl[0][closest_min_index]
+            center_prmsl = prmsl[lat_center_index][lon_center_index]
+            around_center_prmsl_mean = self._around_mean(
+                    prmsl, lat_center_index, lon_center_index
+            )
+            if around_center_prmsl_mean - center_prmsl >= 0.5:
+                break
+            else:
+                print("hoge")
+                np.put(range_from_center, closest_min_index, np.inf)
+
         # bicubic interpolation
+        f = biquadratic.set_stencil(prmsl, lon_center_index, lat_center_index)
         x, y, prmsl_min = biquadratic.interpolate(f) # 補完前の中心座標から見て補完後のずれを単位あたりで返す
 
         dlon = lon[1] - lon[0]
