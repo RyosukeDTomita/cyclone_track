@@ -90,7 +90,7 @@ def main():
 
     prmsl_file_dict = mk_file_list.mk_file_list(args["dir"])
 
-    calc_phys = readnc.CalcPhysics(prmsl_file_dict[args["time"]], args["filetype"])
+    calc_phys = readnc.CalcPhysics(prmsl_file_dict[args["time"]])
     jp_lat, jp_lon = calc_phys.get_lat_lon()
 
     # find cyclone formed datetime to update "formed_datetime".
