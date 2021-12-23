@@ -14,6 +14,7 @@ from typing import Tuple
 import dataclasses
 import numpy as np
 from netCDF4 import Dataset
+import xarray as xr
 
 
 @dataclasses.dataclass
@@ -23,6 +24,8 @@ class CalcPhysics:
     ncfile: str
 
     def __post_init__(self):
+        """__post_init__.
+        """
         self.dataset = Dataset(self.ncfile)
 
         # set variable name.
@@ -54,15 +57,13 @@ class CalcPhysics:
         self.len_jp_lat: int
         self.len_jp_lon: int
 
-    def get_lat_lon(self) -> Tuple[np.ndarray, np.ndarray]:
-        """get_lat_lon.
-        Args:
+    def _cut_near_japan_area(self, lat: np.ndarray, lon: np.ndarray):
+        """_cut_near_japan_area.
 
-        Returns:
-            Tuple[np.ndarray, np.ndarray]:
+        Args:
+            lat (np.ndarray): lat
+            lon (np.ndarray): lon
         """
-        lat = self.dataset.variables[self.variables_name_lat][:]
-        lon = self.dataset.variables[self.variables_name_lon][:]
         lon_2d, lat_2d = np.meshgrid(lon, lat)
         self.jp_mask = ((lon_2d >= 110) & (lon_2d <= 180) & (lat_2d >= 20) & (lat_2d <= 60))
 
@@ -72,7 +73,35 @@ class CalcPhysics:
         jp_lon = lon[lon_gt110_lt180]
         self.len_jp_lat = len(jp_lat)
         self.len_jp_lon = len(jp_lon)
+        return jp_lat, jp_lon
+
+    def get_lat_lon(self) -> Tuple[np.ndarray, np.ndarray]:
+        """get_lat_lon.
+        Args:
+
+        Returns:
+            Tuple[np.ndarray, np.ndarray]:
+        """
+        lat = self.dataset.variables[self.variables_name_lat][:]
+        lon = self.dataset.variables[self.variables_name_lon][:]
+
+        jp_lat, jp_lon = self._cut_near_japan_area(lat, lon)
         return np.array(jp_lat), np.array(jp_lon)
+
+    def get_lat_lon_xr(self) -> Tuple[xr.DataArray, xr.DataArray]:
+        """get_lat_lon_xr.
+
+        Args:
+
+        Returns:
+            Tuple[xr.DataArray, xr.DataArray]:
+        """
+        self.dataset_xr = xr.open_dataset(self.ncfile)
+        lat = self.dataset_xr[self.variables_name_lat]
+        lon = self.dataset_xr[self.variables_name_lon]
+
+        jp_lat, jp_lon = self._cut_near_japan_area(lat, lon)
+        return jp_lat, jp_lon
 
     def get_parameter(self, params:str, ncfile=None, isobaric_surface=None) -> np.ndarray:
         """get_parameter.
