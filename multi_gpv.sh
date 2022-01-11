@@ -15,5 +15,5 @@ date_list=(
 for i in ${!date_list[@]};
 do
     echo ${date_list[$i]}
-    python3 -m cyclonetrack -x 135 -y 37 -d ~/winter/${date_list[$i]} -t 2021-01-06_12 --filetype GPV
+    python3 -m cyclonetrack -x 135 -y 37 -d /media/tomita/480/0106/${date_list[$i]} -t 2021-01-06_12 --filetype GPV
 done

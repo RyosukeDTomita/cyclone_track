@@ -137,10 +137,11 @@ class Tracker:
             around_center_prmsl_mean = self._around_mean(
                     prmsl, lat_center_index, lon_center_index
             )
-            if around_center_prmsl_mean - center_prmsl >= 0.5:
+            #if (around_center_prmsl_mean - center_prmsl >= 0.5):# and lat[lat_center_index]- lat0 :
+            if (around_center_prmsl_mean - center_prmsl >= 0.5) and ((lon[lon_center_index] - lon0) > -3) :
                 break
             else:
-                print("hoge")
+                print("low is not low pressure.")
                 np.put(range_from_center, closest_min_index, np.inf)
 
         # bicubic interpolation
