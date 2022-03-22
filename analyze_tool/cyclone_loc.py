@@ -2,9 +2,11 @@
 """
 Name: cyclone_loc.py
 
-
+plot cyclone center location.
 
 Usage:
+python3 cyclone_loc.py --file <csvfile>
+python3 cyclone_loc.py --dir <csvfiles saved directory>
 
 Author: Ryosuke Tomita
 Date: 2021/12/17
@@ -52,7 +54,7 @@ def mk_label(csvfile: str) -> str:
     if csvfile_has_datetime:
         return csvfile_has_datetime.group()
     else:
-        return "initial_data"
+        return "JRA-55"
 
 
 def read_csv(csvfile: str) -> Tuple[pd.Series, pd.Series, pd.Series]:
@@ -68,15 +70,16 @@ def main():
     args = parse_args()
     if   args["dir"] is not None:
         csv_list = mk_csv_list(args["dir"])
-        initialdata = abspath(join(args["dir"], "initialdata.csv"))
+        #initialdata = abspath(join(args["dir"], "initialdata.csv"))
 
-        lat, lon, prmsl = read_csv(initialdata)
+        #lat, lon, prmsl = read_csv(initialdata)
 
-        label = mk_label(initialdata)
+        #label = mk_label(initialdata)
+        #label = mk_label(initialdata)
         jp_map = japanmap.JpMap(color=True)
-        jp_map.color_list.insert(0, '#696969')
-        jp_map.plot_data(lat, lon, str(label))
-        jp_map.plot_prmsl_circle(lat, lon, prmsl)
+        #jp_map.color_list.insert(0, '#696969')
+        #jp_map.plot_data(lat, lon, str(label))
+        #jp_map.plot_prmsl_circle(lat, lon, prmsl)
 
         for csvfile in csv_list:
             lat, lon, prmsl = read_csv(csvfile)

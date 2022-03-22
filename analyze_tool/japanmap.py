@@ -76,11 +76,11 @@ class JpMap:
         self.ax.set_xlim(110, 180)
         self.ax.set_ylim(20, 60)
 
-        self.color_list = ['#0000ff', '#00ffff', '#008000', '#adff2f',
-                           '#ffff00', '#ffd700', '#ffa500', '#ff0000',
-                           '#c71585', '#ff1493', '#9400d3', '#00ced1',
-                           '#556b2f', '#deb887', '#daa520', '#8b4513',
-                           '#4b0082', '#ffffff',
+        self.color_list = ["#191970", "#0000cd", "#1e90ff",
+                           "#00bfff", "#7fffd4", "#afeeee",
+                           "#fffacd", "#f0e68c", "#ffff00",
+                           "#ffd700", "#ffa500", "#ff4500",
+                           "#b22222", "#8b0000",
                            ]
 
         self.plt_cnt = 0

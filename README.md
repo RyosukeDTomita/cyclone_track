@@ -1,9 +1,15 @@
+![日本語版README.md](./README-ja.md)
 # INDEX
+- [EXAMPLE](#EXAMPLE)
 - [ABOUT](#ABOUT)
 - [HOWTOUSE](#HOWTOUSE)
 - [ENVIRONMENT](#ENVIRONMENT)
 - [INSTALATION](#INSTALATION)
 
+# EXAMPLE
+![example_graph](./example_fig/0106_jra.png)
+![example_track](./example_fig/JRA-55.png)
+![example_track_compare](./example_fig/0106_hikaku.png)
 
 # ABOUT
 - Track cyclone center position.
@@ -48,32 +54,30 @@ surface-2020-12-03_06-prmsl_hPa
 ```
 
 ## run
-### just clone repository and run package (RECOMMEND).
 
 ```shell
 python3 -m cyclonetrack -x 135 -y 37 --dir ~/data_ini/prmsl -t 2021-01-06_12 --filetype GPV
 python3 -m cyclonetrack -x 135 -y 37 --dir ~/jra55/anl_surf125/202101 -t 2021-01-06_12 --filetype jra55
 ```
-
-### need to install. (see INSTALATION.)
-
-```shell
-cyclone-track -x 135 -y 37 --dir ~/data_ini/prmsl -t 2021-01-06_12 --filetype GPV
-cyclone-track -x 135 -y 37 --dir ~/jra55/anl_surf125/202101 -t 2021-01-06_12 --filetype jra55
-```
 ******
 
 
 # INSTALATION
-## build from source cord.
+## install library
+
+```shell
+pip install -r requirements.txt
+```
+
+## build (not necessary)
+
+### build from source cord.
 
 ```shell
 git clone https://github.com/RyosukeDTomita/cyclone_track.git
 cd cyclone_track
 python3 setup.py install
 ```
-
-## Using pip
 
 ### build from tar.gz(sometime flozen file is not up to date.)
 
@@ -82,7 +86,7 @@ wget https://github.com/RyosukeDTomita/cyclone_track/blob/master/dist/cyclone-tr
 pip install cyclone-track-0.0.1.tar.gz
 ```
 
-### make tar.gz
+ make cyclone-track-0.0.1.tar.gz
 
 ```shell
 git clone https://github.com/RyosukeDTomita/cyclone_track.git
@@ -93,9 +97,9 @@ pip install ./dist/cyclone-track-0.0.1.tar.gz
 
 ## uninstall
 
-```
-pip uninstall cycloen-track
+```shell
 python setup.py develop -u
+pip uninstall cycloen-track
 ```
 ******
 
@@ -104,4 +108,13 @@ python setup.py develop -u
 I tested the following environment.
 - Python3.8
 - Ubuntu 20.04 LTS
-see [requirement.txt](./requirements.txt)
+about library, see [requirement.txt](./requirements.txt)
+******
+
+
+# ANARYSINGTOOL
+Anarysing tool are saved in [analyze_tool/](./analyze_tool).See [README.md](analyze_tool/README.md)
+
+
+# OTHER PROGRAM
+[Calcureate Local Deeping Rate](https://github.com/RyosukeDTomita/cyclone_ldr)
