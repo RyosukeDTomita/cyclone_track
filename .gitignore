@@ -1,6 +1,6 @@
 *.csv
 analyze_tool/*.png
 tesh.sh
-*.png
+#*.png
 shells/*.png
 build
